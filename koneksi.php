@@ -1,7 +1,7 @@
 <?php
 	$servername = "localhost";
-	$username = "gokil";
-	$password = "gokil";
+	$username = "root";
+	$password = "";
 	$dbname = "sehat_doc";
 
 	// Create connection
