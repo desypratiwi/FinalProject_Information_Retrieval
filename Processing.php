@@ -111,6 +111,30 @@ class Processing{
         }
         return $hasil;
     }
+	// Method untuk menghitung Skalar TF-IDF
+    public static function skalar($index_dok){
+        $skalar = 0;
+        
+        for($i=0;$i<count(Processing::$keywords);$i++){
+           $word =  Processing::$keywords[$i];
+           $skalar += pow(Processing::$tf_idf[$word][$index_dok]);
+        }
+        return sqrt($skalar);
+    }
+    // Method untuk menghitung Cosine Similarity
+    public static function cosine_similarity($index_dok1,$index_dok2){
+        $ska_dok1 = Processing::skalar($index_dok1);
+        $ska_dok2 = Processing::skalar($index_dok2);
+        
+        $jumlah_atas = 0;
+        for($i=0;$i<count(Processing::$keywords);$i++){
+            $word =  Processing::$keywords[$i];
+            $keyword = Processing::$tf_idf[$word];
+            $jumlah_atas += $keyword[$index_dok1]*$keyword[$index_dok2];
+            
+        }
+        return ($jumlah_atas)/($ska_dok1*$ska_dok2);
+    }
 }
 $tes = new Processing();
 //print_r($tes->seluruh_data_db());
