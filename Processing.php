@@ -1,7 +1,16 @@
 <?php 
 include 'Penyakit.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+ini_set('memory_limit', '512M');
+error_reporting(E_ALL);
 class Processing{
     public static $datas;
+    public static $tf;
+    public static $idf;
+    public static $df;
+    public static $tf_idf;
+    public static $keywords;
     public static function seluruh_data_db(){
             include 'koneksi.php';
         
@@ -20,8 +29,13 @@ class Processing{
                         $page = $row['url_page'];
                         $url_ori = $row['url_page_ori'];
                         $slug = $row['slug'];
-                        
-                        $data = new Penyakit($id, $judul, $desc, $desc_t, $penyakit, $page, $url_ori, $slug);
+                        $banyak = count($desc_t);
+                        $words = Processing::tokenizing($desc_t);
+//                        print_r($words);
+                        // Menghitung tiap word
+                        $l_word_count = array_count_values($words);
+//                        print_r ($l_word_count);
+                        $data = new Penyakit($id, $judul, $desc, $desc_t, $penyakit, $page, $url_ori, $slug,$banyak,$l_word_count,$words);
                         $datas[] = $data;
                         
                     }
