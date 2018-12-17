@@ -64,6 +64,17 @@ class Processing{
         $string_array = explode(" ", $string);
         return $string_array;
     }
+	//Fungsi untuk menghitung Banyak kata pada suatu dokumen
+    public static function hitung_kata($katas){
+        return array_count_values($katas);
+    }
+	//Method untuk mengembalikan banyaknya kata pada suatu dokumen
+    public static function banyak_kata($doc,$word){
+//        print_r ($doc->list_word_count[$word]);
+        return ($doc->list_word_count[$word]);
+//        print_r($doc->list_word_count);
+//        return $doc->list_word_count[$word];
+    }
 }
 $tes = new Processing();
 //print_r($tes->seluruh_data_db());
