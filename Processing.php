@@ -75,6 +75,42 @@ class Processing{
 //        print_r($doc->list_word_count);
 //        return $doc->list_word_count[$word];
     }
+	// Fungsi untuk mencari unique word
+    public static function unique_word_string($teks){
+        return array_unique(Processing::tokenizing($teks));
+    }
+    //Biar lebih efisien waktu
+    public static function unique_word_array($arr){
+        return array_unique($arr);
+    }
+    
+    public static function gabung($teks1,$teks2){
+        return array_merge($teks1,$teks2);
+    }
+    //Fungsi untuk mencari seluruh keyword pada gabungan dokumen
+    public static function cari_seluruh_keyword(){
+        //Filter dengan unique word terlebih dahulu
+        $dok = Processing::$datas[0];
+//        print_r($dok);
+//        $katas = Processing::unique_word_array($dok->words);
+         $katas = array_unique($dok->words);
+//        print_r($katas);
+        $hasil = $katas;
+//        print_r($hasil);
+        //Gabung satu persatu
+        for($i=1;$i<count(Processing::$datas);$i++){
+            $dok = Processing::$datas[$i];
+//            $katas = Processing::unique_word_array($dok->words);
+            $katas = array_unique($dok->words);
+//        print_r($katas);            
+            $hasil = Processing::gabung($hasil, $katas);
+//            print_r($hasil);
+            //Filter kembali
+            $hasil = array_unique($hasil);
+//            print_r($hasil);
+        }
+        return $hasil;
+    }
 }
 $tes = new Processing();
 //print_r($tes->seluruh_data_db());
