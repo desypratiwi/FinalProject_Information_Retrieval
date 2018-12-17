@@ -33,7 +33,7 @@ class Processing{
                         $words = Processing::tokenizing($desc_t);
 //                        print_r($words);
                         // Menghitung tiap word
-                        $l_word_count = array_count_values($words);
+                        $l_word_count = Processing::hitung_kata($words);
 //                        print_r ($l_word_count);
                         $data = new Penyakit($id, $judul, $desc, $desc_t, $penyakit, $page, $url_ori, $slug,$banyak,$l_word_count,$words);
                         $datas[] = $data;
