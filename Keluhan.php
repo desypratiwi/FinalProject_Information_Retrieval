@@ -13,6 +13,25 @@
             $qry = mysqli_query($conn, $sql);
 
         }
+		function insertData($keluhan){
+            include 'koneksi.php';
+            $sql = "INSERT INTO tb_mst_penyakit(judul,deskripsi_text,slug) VALUES('keluhan','{$keluhan}','keluhan') ";
+            $qry = mysqli_query($conn, $sql);
+            if($qry){
+                $sql = "SELECT LAST_INSERT_ID()";
+                $qry = mysqli_query($conn,$sql);
+                $id = mysqli_fetch_assoc($qry);
+                return $id['LAST_INSERT_ID()'];
+            }else{
+                echo mysqli_error($conn);
+            }
+        }
+        function deleteKeluhan($id){
+            include 'koneksi.php';
+            $sql = "DELETE FROM tb_mst_penyakit WHERE id_penyakit = {$id}";
+            $hasil = mysqli_query($conn, $sql);
+            
+        }
 		?>
 <form method="post" action="">
 	

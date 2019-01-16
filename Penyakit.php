@@ -11,6 +11,7 @@
                 public $banyak_word=-1;
                 public $list_word_count;
                 public $words;
+                public $cosine_similarity;
                 public function __construct($id,$judul,$desc,$desc_text,$penyakit,$page,$url_ori,$slug,$banyak_word,$l_word_count,$words) {
                     $this->id_penyakit = $id;
                     $this->judul = $judul;
