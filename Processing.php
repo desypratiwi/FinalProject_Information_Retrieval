@@ -111,6 +111,81 @@ class Processing{
         }
         return $hasil;
     }
+    public static function tf_idf(){
+        //Penghitungan TF
+        
+        $keywords = Processing::cari_seluruh_keyword();
+        Processing::$keywords = $keywords;
+//        print_r($keywords);
+        //Per Keyword
+//        Processing::$tf= array(array());
+//        Processing::$df= array();
+//        Processing::$idf= array();
+        for($i=0;$i<count($keywords);$i++){
+            
+            
+            if(isset($keywords[$i])||(!empty($keywords[$i]))){
+                $word = $keywords[$i];
+                Processing::$df[$word] = 0;
+                //TF dengan keyword '$...' pada data $i
+                for($j=0;$j<count(Processing::$datas);$j++){
+                    $doc =Processing::$datas[$j];
+    //                  echo $j;  
+    //                echo Processing::banyak_kata($doc, $word);
+                    //Jika list tidak null maka ada kata tersebut ada di dokumennya
+                    Processing::$tf[$word][$j] = isset($doc->list_word_count[$word]) ? $doc->list_word_count[$word] :0;
+                    // DF Bertambah jika pada suatu dokumen terdapat kata tersebut
+                    Processing::$df[$word] = (Processing::$tf[$word][$j]!=0) ? (Processing::$df[$word])+1 : Processing::$df[$word];
+                    Processing::$tf[$word][$j] = Processing::$tf[$word][$j] / $doc->banyak_word;
+                }
+                
+                //jika df == 0 maka jadikan df = 0.1
+                Processing::$df[$word] = (Processing::$df[$word]==0) ? 0.1 : Processing::$df[$word];
+                // Penghitungan IDF 
+                Processing::$idf[$word] = log(count(Processing::$datas)/Processing::$df[$word])/log(2);
+                
+            
+                // Penghitungan tabel TF-IDF
+//                Processing::$tf_idf= array(array());
+                for($j=0;$j<count(Processing::$datas);$j++){
+                    Processing::$tf_idf[$word][$j]  = Processing::$tf[$word][$j] * Processing::$idf[$word];
+                }    
+            }
+            
+            
+        }
+//        echo "<pre>";
+//        print_r($tf);
+//        print_r($idf);
+//        echo "</pre>";
+         
+    }
+    // Telah tersedia data tabel TF-IDF 
+	// Method untuk menghitung Skalar TF-IDF
+    public static function skalar($index_dok){
+        $skalar = 0;
+        
+        for($i=0;$i<count(Processing::$keywords);$i++){
+           $word =  Processing::$keywords[$i];
+           $skalar += pow(Processing::$tf_idf[$word][$index_dok]);
+        }
+        return sqrt($skalar);
+    }
+    // Method untuk menghitung Cosine Similarity
+    public static function cosine_similarity($index_dok1,$index_dok2){
+        $ska_dok1 = Processing::skalar($index_dok1);
+        $ska_dok2 = Processing::skalar($index_dok2);
+        
+        $jumlah_atas = 0;
+        for($i=0;$i<count(Processing::$keywords);$i++){
+            $word =  Processing::$keywords[$i];
+            $keyword = Processing::$tf_idf[$word];
+            $jumlah_atas += $keyword[$index_dok1]*$keyword[$index_dok2];
+            
+        }
+        return ($jumlah_atas)/($ska_dok1*$ska_dok2);
+    }
+
 }
 $tes = new Processing();
 //print_r($tes->seluruh_data_db());
