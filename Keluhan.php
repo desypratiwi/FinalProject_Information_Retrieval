@@ -5,7 +5,15 @@
 <link href='https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
 <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
 
+<?php
+	
+        function insertKeluhan($keluhan,$doc){
+            include 'koneksi.php';
+            $sql = "INSERT INTO tb_tr_keluhan VALUES('{$keluhan}','{$doc}')";
+            $qry = mysqli_query($conn, $sql);
 
+        }
+		?>
 <form method="post" action="">
 	
         <table>
