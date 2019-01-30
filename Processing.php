@@ -5,12 +5,14 @@ ini_set('display_startup_errors', 1);
 ini_set('memory_limit', '512M');
 error_reporting(E_ALL);
 class Processing{
+    
     public static $datas;
     public static $tf;
     public static $idf;
     public static $df;
     public static $tf_idf;
     public static $keywords;
+    
     public static function seluruh_data_db(){
             include 'koneksi.php';
         
@@ -54,7 +56,7 @@ class Processing{
               return strtolower($str);
     }    
     
-    public function tokenizing($kalimat)
+    public static function tokenizing($kalimat)
     {
         
         $string = preg_replace('/[^A-Za-z0-9\-]/', ' ', $kalimat);
@@ -112,6 +114,7 @@ class Processing{
         return $hasil;
     }
     public static function tf_idf(){
+        
         //Penghitungan TF
         
         $keywords = Processing::cari_seluruh_keyword();
@@ -144,11 +147,11 @@ class Processing{
                 // Penghitungan IDF 
                 Processing::$idf[$word] = log(count(Processing::$datas)/Processing::$df[$word])/log(2);
                 
-            
                 // Penghitungan tabel TF-IDF
 //                Processing::$tf_idf= array(array());
                 for($j=0;$j<count(Processing::$datas);$j++){
                     Processing::$tf_idf[$word][$j]  = Processing::$tf[$word][$j] * Processing::$idf[$word];
+                    //self::insertTF_IDF(self::$datas[$j]->id_penyakit, $word, self::$tf_idf[$word][$j]);
                 }    
             }
             
@@ -160,6 +163,18 @@ class Processing{
 //        echo "</pre>";
          
     }
+    public static function insertTF_IDF($id,$word,$tfidf){
+        include 'koneksi.php';
+        $sql = "INSERT INTO tb_tr_tf_idf VALUES ({$id},'{$word}',{$tfidf})";
+        $query = mysqli_query($conn, $sql);
+        if($query){
+        
+            
+        }else{
+            
+        }
+        
+    }
     // Telah tersedia data tabel TF-IDF 
 	// Method untuk menghitung Skalar TF-IDF
     public static function skalar($index_dok){
@@ -167,7 +182,7 @@ class Processing{
         
         for($i=0;$i<count(Processing::$keywords);$i++){
            $word =  Processing::$keywords[$i];
-           $skalar += pow(Processing::$tf_idf[$word][$index_dok]);
+           $skalar += pow(Processing::$tf_idf[$word][$index_dok],2);
         }
         return sqrt($skalar);
     }
@@ -187,10 +202,6 @@ class Processing{
     }
 
 }
-$tes = new Processing();
-//print_r($tes->seluruh_data_db());
-$tes->seluruh_data_db();
-$res = Processing::tokenizing(Processing::$datas[0]->deskripsi_text);
-print_r($res);
+
 
 ?>

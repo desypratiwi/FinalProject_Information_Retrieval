@@ -5,15 +5,9 @@
 <link href='https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
 <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
 
-<?php
-	
-        function insertKeluhan($keluhan,$doc){
-            include 'koneksi.php';
-            $sql = "INSERT INTO tb_tr_keluhan VALUES('{$keluhan}','{$doc}')";
-            $qry = mysqli_query($conn, $sql);
-
-        }
-		function insertData($keluhan){
+    <?php
+        //include 'Processing.php';
+        function insertData($keluhan){
             include 'koneksi.php';
             $sql = "INSERT INTO tb_mst_penyakit(judul,deskripsi_text,slug) VALUES('keluhan','{$keluhan}','keluhan') ";
             $qry = mysqli_query($conn, $sql);
@@ -32,9 +26,46 @@
             $hasil = mysqli_query($conn, $sql);
             
         }
-		?>
-<form method="post" action="">
-	
+        function insertKeluhan($keluhan,$doc){
+            include 'koneksi.php';
+            $sql = "INSERT INTO tb_tr_keluhan VALUES('{$keluhan}','{$doc}')";
+            $qry = mysqli_query($conn, $sql);
+
+        }
+        if(isset($_POST['keluhan'])){
+            include 'Processing.php';
+            $tes = new Processing();
+            //Tambahkan terlebih dahulu ke database
+            $id = insertData($_POST['keluhan']);
+            $tes->seluruh_data_db();
+            $tes->tf_idf();
+            
+            $all_data = Processing::$datas;
+            
+            $index_doc = count($all_data)-1;
+            $data = array();
+            
+            $maxi = 0;
+            $doc = -1;
+            for($i=0;$i<$index_doc;$i++){
+                $kecocokan = Processing::cosine_similarity($index_doc, $i);
+                if($maxi<$kecocokan){
+                    $maxi = $kecocokan;
+                    $doc = $i;
+                }
+                $all_data[$i]->cosine_similarity = $kecocokan;
+                $data[] = $all_data[$i];
+            }
+            
+            deleteKeluhan($id);
+            insertKeluhan($_POST['keluhan'],$doc);
+            
+        }
+        
+        
+        //insertKeluhan("oke");
+    ?>
+    <form method="post" action="">
         <table>
             <tr>
                 <td><textarea name="keluhan"><?php echo isset($_POST['keluhan'])?$_POST['keluhan']:"" ?></textarea></td>
